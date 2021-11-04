@@ -13,5 +13,10 @@ UCLASS()
 class SCHOOLPORJECT_API UEndRaceWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGemotry, float InDeltaTime) override;
+
+private:
+
 };

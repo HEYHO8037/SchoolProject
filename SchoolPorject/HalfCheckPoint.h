@@ -5,28 +5,24 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
-#include "CheckPoint.generated.h"
+#include "HalfCheckPoint.generated.h"
 
 UCLASS()
-class SCHOOLPORJECT_API ACheckPoint : public AActor
+class SCHOOLPORJECT_API AHalfCheckPoint : public AActor
 {
 	GENERATED_BODY()
-
 private:
 	UPROPERTY()
-	UBoxComponent* CheckPointZone;
-
-	bool bIsOnce;
-
+	UBoxComponent* HalfCheckPointZone;
 public:	
 	// Sets default values for this actor's properties
-	ACheckPoint();
+	AHalfCheckPoint();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

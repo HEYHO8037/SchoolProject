@@ -105,6 +105,8 @@ public:
 	UFUNCTION()
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+	bool bIsCheckHalfPoint();
+
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
 
@@ -124,6 +126,7 @@ private:
 	bool bIsLowFriction;
 
 	int playerLap;
+	bool bIsHalfPoint;
 
 
 public:

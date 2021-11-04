@@ -6,6 +6,8 @@
 #include "SchoolPorjectHud.h"
 #include "CheckPoint.h"
 #include "SchoolPorjectGameMode.h"
+#include "HalfCheckPoint.h"
+#include "FinishPoint.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -128,6 +130,7 @@ ASchoolPorjectPawn::ASchoolPorjectPawn()
 	bInReverseGear = false;
 
 	playerLap = 0;
+	bIsHalfPoint = false;
 }
 
 void ASchoolPorjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -309,11 +312,22 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	UE_LOG(LogTemp, Warning, TEXT("Collision"));
 
-	if (playerLap == 5)
+	if (OtherActor->IsA(AHalfCheckPoint::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Half"));
+		bIsHalfPoint = true;
+	}
+
+	if (playerLap == 5 && OtherActor->IsA(AFinishPoint::StaticClass()))
 	{
 		DisableInput(Cast<APlayerController>(this));
 		MoveForward(0);
 	}
+}
+
+bool ASchoolPorjectPawn::bIsCheckHalfPoint()
+{
+	return bIsHalfPoint;
 }
 
 

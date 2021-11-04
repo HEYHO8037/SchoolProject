@@ -32,7 +32,6 @@ void ASchoolPorjectGameMode::AdvanceTimer()
     if (CountDownTime < 1)
     {
         GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
-		UE_LOG(LogTemp, Warning, TEXT("222"));
     }
 }
 

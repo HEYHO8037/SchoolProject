@@ -15,14 +15,20 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void AdvanceTimer();
-	int32 GetCountDownTime();
 
-	FTimerHandle CountdownTimerHandle;
+	void CountDownAdvanceTimer();
+	void StartInGameAdvanceTimer();
+
+	int32 GetCountDownTime();
+	float GetInGameTime();
+
+	FTimerHandle CountDownTimerHandle;
+	FTimerHandle InGameHandle;
 
 
 private:
 	int32 CountDownTime;
+	float InGameTimer;
 };
 
 

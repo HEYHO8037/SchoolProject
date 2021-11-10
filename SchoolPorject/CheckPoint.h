@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SchoolPorjectPawn.h"
 #include "Components/BoxComponent.h"
 #include "CheckPoint.generated.h"
 
@@ -15,6 +16,9 @@ class SCHOOLPORJECT_API ACheckPoint : public AActor
 private:
 	UPROPERTY()
 	UBoxComponent* CheckPointZone;
+
+	AActor* PlayerPawn;
+	ASchoolPorjectPawn* SchoolPorjectPawn;
 
 	bool bIsOnce;
 

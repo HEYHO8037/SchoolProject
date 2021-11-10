@@ -2,7 +2,6 @@
 
 
 #include "CheckPoint.h"
-#include "SchoolPorjectPawn.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -21,6 +20,11 @@ ACheckPoint::ACheckPoint()
 void ACheckPoint::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	SchoolPorjectPawn = Cast<ASchoolPorjectPawn>(PlayerPawn);
+
 }
 
 // Called every frame
@@ -28,17 +32,17 @@ void ACheckPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AActor* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	ASchoolPorjectPawn* SchoolPorjectPawn = Cast<ASchoolPorjectPawn>(PlayerPawn);
-
-
-	if (SchoolPorjectPawn->bIsCheckHalfPoint())
+	if (SchoolPorjectPawn != nullptr && SchoolPorjectPawn->bIsCheckHalfPoint())
 	{
 		if (!bIsOnce)
 		{
 			CheckPointZone->SetGenerateOverlapEvents(true);
 			bIsOnce = true;
 		}
+	}
+	else
+	{
+		return;
 	}
 
 }

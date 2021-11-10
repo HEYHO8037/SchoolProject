@@ -118,6 +118,7 @@ ASchoolPorjectPawn::ASchoolPorjectPawn()
 	InCarGear->SetRelativeRotation(FRotator(25.0f, 180.0f,0.0f));
 	InCarGear->SetRelativeScale3D(FVector(1.0f, 0.4f, 0.4f));
 	InCarGear->SetupAttachment(GetMesh());
+
 	
 	// Colors for the incar gear display. One for normal one for reverse
 	GearDisplayReverseColor = FColor(255, 0, 0, 255);
@@ -131,6 +132,7 @@ ASchoolPorjectPawn::ASchoolPorjectPawn()
 
 	playerLap = 0;
 	bIsHalfPoint = false;
+	bIsFinished = false;
 }
 
 void ASchoolPorjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -233,12 +235,20 @@ void ASchoolPorjectPawn::Tick(float Delta)
 		}
 	}
 
-	if (Cast<ASchoolPorjectGameMode>(UGameplayStatics::GetGameMode(this))->GetCountDownTime() == 0 && playerLap != 5)
-	{
-		EnableInput(Cast<APlayerController>(this));
-	}
-	
 
+	ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (SPGameMode != nullptr)
+	{
+		if (SPGameMode->GetCountDownTime() == 0 && playerLap != 5)
+		{
+			EnableInput(Cast<APlayerController>(this));
+		}
+		else
+		{
+			return;
+		}
+	}
 }
 
 void ASchoolPorjectPawn::BeginPlay()
@@ -274,7 +284,7 @@ void ASchoolPorjectPawn::UpdateHUDStrings()
 
 	// Using FText because this is display text that should be localizable
 	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} km/h"), FText::AsNumber(KPH_int));
-	
+
 	if (bInReverseGear == true)
 	{
 		GearDisplayString = FText(LOCTEXT("ReverseGear", "R"));
@@ -320,6 +330,7 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	if (playerLap == 5 && OtherActor->IsA(AFinishPoint::StaticClass()))
 	{
+		bIsFinished = true;
 		DisableInput(Cast<APlayerController>(this));
 		MoveForward(0);
 	}
@@ -328,6 +339,11 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 bool ASchoolPorjectPawn::bIsCheckHalfPoint()
 {
 	return bIsHalfPoint;
+}
+
+bool ASchoolPorjectPawn::bIsCheckFinished()
+{
+	return bIsFinished;
 }
 
 

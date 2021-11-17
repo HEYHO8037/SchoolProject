@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "WheeledVehicle.h"
+#include "Net/UnrealNetwork.h"
 #include "SchoolPorjectPawn.generated.h"
 
 class UCameraComponent;
@@ -44,7 +45,7 @@ class ASchoolPorjectPawn : public AWheeledVehicle
 
 	
 public:
-	ASchoolPorjectPawn();
+	ASchoolPorjectPawn(const FObjectInitializer& ObjectInitalizer);
 
 	/** The current speed as a string eg 10 km/h */
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
@@ -102,10 +103,10 @@ public:
 	/** Handle reset VR device */
 	void OnResetVR();
 
-	UFUNCTION()
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	bool bIsCheckHalfPoint();
+
 	bool bIsCheckFinished();
 
 	static const FName LookUpBinding;

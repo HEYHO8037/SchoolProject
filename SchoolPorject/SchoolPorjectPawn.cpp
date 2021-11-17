@@ -39,7 +39,8 @@ const FName ASchoolPorjectPawn::LookRightBinding("LookRight");
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
-ASchoolPorjectPawn::ASchoolPorjectPawn()
+ASchoolPorjectPawn::ASchoolPorjectPawn(const FObjectInitializer& ObjectInitalizer)
+	: Super(ObjectInitalizer)
 {
 	// Car mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("/Game/Vehicle/Sedan/Sedan_SkelMesh.Sedan_SkelMesh"));
@@ -133,6 +134,9 @@ ASchoolPorjectPawn::ASchoolPorjectPawn()
 	playerLap = 0;
 	bIsHalfPoint = false;
 	bIsFinished = false;
+	bReplicates = true;
+	SetReplicateMovement(true);
+	SetReplicates(true);
 }
 
 void ASchoolPorjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -236,7 +240,7 @@ void ASchoolPorjectPawn::Tick(float Delta)
 	}
 
 
-	ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(GetWorld()->GetAuthGameMode());
+	/*ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(GetWorld()->GetAuthGameMode());
 
 	if (SPGameMode != nullptr)
 	{
@@ -248,7 +252,7 @@ void ASchoolPorjectPawn::Tick(float Delta)
 		{
 			return;
 		}
-	}
+	}*/
 }
 
 void ASchoolPorjectPawn::BeginPlay()
@@ -261,7 +265,7 @@ void ASchoolPorjectPawn::BeginPlay()
 #endif // HMD_MODULE_INCLUDED
 	EnableIncarView(bEnableInCar,true);
 
-	DisableInput(Cast<APlayerController>(this));
+	/*DisableInput(Cast<APlayerController>(this));*/
 
 }
 
@@ -328,12 +332,12 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 		bIsHalfPoint = true;
 	}
 
-	if (playerLap == 5 && OtherActor->IsA(AFinishPoint::StaticClass()))
+	/*if (playerLap == 5 && OtherActor->IsA(AFinishPoint::StaticClass()))
 	{
 		bIsFinished = true;
 		DisableInput(Cast<APlayerController>(this));
 		MoveForward(0);
-	}
+	}*/
 }
 
 bool ASchoolPorjectPawn::bIsCheckHalfPoint()

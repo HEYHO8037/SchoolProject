@@ -15,6 +15,10 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
+
+	void OnUserReady();
+	void OnStart();
 
 	void CountDownAdvanceTimer();
 	void StartInGameAdvanceTimer();
@@ -25,10 +29,11 @@ public:
 	FTimerHandle CountDownTimerHandle;
 	FTimerHandle InGameHandle;
 
-
 private:
 	int32 CountDownTime;
 	float InGameTimer;
+	int32 ReadyCount;
+
 };
 
 

@@ -9,6 +9,7 @@
 #include "HalfCheckPoint.h"
 #include "FinishPoint.h"
 
+
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -134,6 +135,12 @@ ASchoolPorjectPawn::ASchoolPorjectPawn(const FObjectInitializer& ObjectInitalize
 	playerLap = 0;
 	bIsHalfPoint = false;
 	bIsFinished = false;
+	bIsOnce = false;
+	
+
+	ConstructorHelpers::FClassFinder<UCountDownWidget> BPWidget(TEXT("/Game/UI/CountDownWidget_BP"));
+	CountDownWidget = BPWidget.Class;
+
 	bReplicates = true;
 	SetReplicateMovement(true);
 	SetReplicates(true);
@@ -239,20 +246,23 @@ void ASchoolPorjectPawn::Tick(float Delta)
 		}
 	}
 
-
-	/*ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(GetWorld()->GetAuthGameMode());
-
-	if (SPGameMode != nullptr)
+	if (!bIsOnce)
 	{
-		if (SPGameMode->GetCountDownTime() == 0 && playerLap != 5)
+		ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (SPGameMode != nullptr)
 		{
-			EnableInput(Cast<APlayerController>(this));
+			if (SPGameMode->GetCountDownTime() == 0)
+			{
+				Enable();
+				bIsOnce = true;
+			}
+			else
+			{
+				return;
+			}
 		}
-		else
-		{
-			return;
-		}
-	}*/
+	}
 }
 
 void ASchoolPorjectPawn::BeginPlay()
@@ -265,7 +275,7 @@ void ASchoolPorjectPawn::BeginPlay()
 #endif // HMD_MODULE_INCLUDED
 	EnableIncarView(bEnableInCar,true);
 
-	/*DisableInput(Cast<APlayerController>(this));*/
+	Disable();
 
 }
 
@@ -332,12 +342,12 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 		bIsHalfPoint = true;
 	}
 
-	/*if (playerLap == 5 && OtherActor->IsA(AFinishPoint::StaticClass()))
+	if (playerLap >= 5 && bIsHalfPoint == true && OtherActor->IsA(AFinishPoint::StaticClass()))
 	{
 		bIsFinished = true;
 		DisableInput(Cast<APlayerController>(this));
 		MoveForward(0);
-	}*/
+	}
 }
 
 bool ASchoolPorjectPawn::bIsCheckHalfPoint()
@@ -350,6 +360,39 @@ bool ASchoolPorjectPawn::bIsCheckFinished()
 	return bIsFinished;
 }
 
+void ASchoolPorjectPawn::OnUserCountChanged_Implementation(int32 UserCount)
+{
+	if (UserCount >= 2)
+	{
+		OnReady();
+	}
+}
+
+void ASchoolPorjectPawn::OnReady_Implementation()
+{
+	ASchoolPorjectGameMode* GameMode = Cast<ASchoolPorjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	GameMode->OnUserReady();
+}
+
+void ASchoolPorjectPawn::OnStart_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Yeah"));
+
+	//UCountDownWidget* Widget = Cast<UCountDownWidget>(CountDownWidget);
+	//Widget->AddToViewport();
+	
+}
+
+void ASchoolPorjectPawn::Disable_Implementation()
+{
+	DisableInput(UGameplayStatics::GetPlayerController(this, 0));
+}
+
+void ASchoolPorjectPawn::Enable_Implementation()
+{
+	EnableInput(UGameplayStatics::GetPlayerController(this, 0));
+}
 
 #undef LOCTEXT_NAMESPACE
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "WheeledVehicle.h"
+#include "CountDownWidget.h"
 #include "Net/UnrealNetwork.h"
 #include "SchoolPorjectPawn.generated.h"
 
@@ -43,6 +44,7 @@ class ASchoolPorjectPawn : public AWheeledVehicle
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UTextRenderComponent* InCarGear;
 
+
 	
 public:
 	ASchoolPorjectPawn(const FObjectInitializer& ObjectInitalizer);
@@ -70,6 +72,8 @@ public:
 	/** Are we in reverse gear */
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly)
 	bool bInReverseGear;
+
+	TSubclassOf<UCountDownWidget> CountDownWidget;
 
 	/** Initial offset of incar camera */
 	FVector InternalCameraOrigin;
@@ -109,6 +113,22 @@ public:
 
 	bool bIsCheckFinished();
 
+
+	UFUNCTION(Client, reliable)	
+	void OnUserCountChanged(int32 UserCount);
+
+	UFUNCTION(Server, reliable)
+	void OnReady();
+
+	UFUNCTION(Client, reliable)
+	void OnStart();
+
+	UFUNCTION(NetMulticast, reliable)
+	void Disable();
+
+	UFUNCTION(NetMulticast, reliable)
+	void Enable();
+
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
 
@@ -128,10 +148,9 @@ private:
 	bool bIsLowFriction;
 
 	int playerLap;
-
 	bool bIsHalfPoint;
-
 	bool bIsFinished;
+	bool bIsOnce;
 
 
 

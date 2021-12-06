@@ -68,6 +68,6 @@ void UCountDownWidget::NativeTick(const FGeometry& MyGemotry, float InDeltaTime)
 {
 	Super::NativeTick(MyGemotry, InDeltaTime);
 
-	CountDownText->SetText(SetNumberField());
+	//CountDownText->SetText(SetNumberField());
 
  }

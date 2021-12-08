@@ -3,7 +3,9 @@
 
 #include "InGameTimerWidget.h"
 #include "SchoolPorjectGameMode.h"
+#include "SchoolPorjectPawn.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UInGameTimerWidget::NativeConstruct()
@@ -22,48 +24,22 @@ bool UInGameTimerWidget::Initialize()
 
 	if (TimerText)
 	{
-		UWorld* World = GetWorld();
-
-		if (World != nullptr)
-		{
-			ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(World->GetAuthGameMode());
-
-			if (SPGameMode)
-			{
-				TimerText->SetText(FText::FromString("00:00"));
-
-				TimerText->TextDelegate.BindUFunction(this, "InGameField");
-			}
-		}
+		TimerText->SetText(FText::FromString("00:00"));
+		TimerText->TextDelegate.BindUFunction(this, "InGameField");
 	}
+
 	return true;
 }
 
 FText UInGameTimerWidget::SetTimerField()
 {
-	UWorld* World = GetWorld();
-
-	if (World != nullptr)
-	{
-		ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(World->GetAuthGameMode());
-
-		if (SPGameMode)
-		{
-			return FText::FromString(FString::FromInt(SPGameMode->GetInGameTime()));
-		}
-		else
-		{
-			return FText::FromString("00:00");
-		}
-	}
-
-	return FText::FromString("00:00");
+		return FText::FromString(FString::FromInt(Cast<ASchoolPorjectPawn>(GetOwningPlayerPawn())->GetInGameTime()));
 }
+
 void UInGameTimerWidget::NativeTick(const FGeometry& MyGemotry, float InDeltaTime)
 {
 	Super::NativeTick(MyGemotry, InDeltaTime);
 
 	TimerText->SetText(SetTimerField());
-
 }
 

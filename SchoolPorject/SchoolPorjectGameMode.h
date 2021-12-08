@@ -20,18 +20,7 @@ public:
 	void OnUserReady();
 	void OnStart();
 
-	void CountDownAdvanceTimer();
-	void StartInGameAdvanceTimer();
-
-	int32 GetCountDownTime();
-	float GetInGameTime();
-
-	FTimerHandle CountDownTimerHandle;
-	FTimerHandle InGameHandle;
-
 private:
-	int32 CountDownTime;
-	float InGameTimer;
 	int32 ReadyCount;
 
 };

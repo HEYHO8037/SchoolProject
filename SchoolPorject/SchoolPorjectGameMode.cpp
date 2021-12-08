@@ -11,8 +11,6 @@ ASchoolPorjectGameMode::ASchoolPorjectGameMode()
 	HUDClass = ASchoolPorjectHud::StaticClass();
 
 	ReadyCount = 0;
-	CountDownTime = 3;
-	InGameTimer = 0.0f;
 }
 
 void ASchoolPorjectGameMode::BeginPlay()
@@ -24,34 +22,6 @@ void ASchoolPorjectGameMode::BeginPlay()
 void ASchoolPorjectGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-
-void ASchoolPorjectGameMode::CountDownAdvanceTimer()
-{
-    --CountDownTime;
-	UE_LOG(LogTemp, Warning, TEXT("0"));
-
-    if (CountDownTime < 1)
-    {
-        GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
-		GetWorldTimerManager().SetTimer(InGameHandle, this, &ASchoolPorjectGameMode::StartInGameAdvanceTimer, 0.1f, true);
-    }
-}
-
-void ASchoolPorjectGameMode::StartInGameAdvanceTimer()
-{
-	InGameTimer += 0.1f;
-}
-
-int32 ASchoolPorjectGameMode::GetCountDownTime()
-{
-	return CountDownTime;
-}
-
-float ASchoolPorjectGameMode::GetInGameTime()
-{
-	return InGameTimer;
 }
 
 void ASchoolPorjectGameMode::RestartPlayer(AController* NewPlayer)
@@ -91,5 +61,4 @@ void ASchoolPorjectGameMode::OnUserReady()
 
 void ASchoolPorjectGameMode::OnStart()
 {
-	GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &ASchoolPorjectGameMode::CountDownAdvanceTimer, 1.0f, true);
 }

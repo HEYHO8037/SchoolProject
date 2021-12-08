@@ -16,6 +16,7 @@ class SCHOOLPORJECT_API UCountDownWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	
 	virtual void NativeTick(const FGeometry& MyGemotry, float InDeltaTime) override;
 
 protected:
@@ -25,7 +26,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* CountDownText;
 
-	UFUNCTION()
 	FText SetNumberField();
 
 };

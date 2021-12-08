@@ -2,8 +2,9 @@
 
 
 #include "CountDownWidget.h"
-#include "SchoolPorjectGameMode.h"
+#include "SchoolPorjectPawn.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UCountDownWidget::NativeConstruct()
@@ -22,19 +23,8 @@ bool UCountDownWidget::Initialize()
 
 	if (CountDownText)
 	{
-		UWorld* World = GetWorld();
-
-		if (World != nullptr)
-		{
-			ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(World->GetAuthGameMode());
-
-			if (SPGameMode)
-			{
-				CountDownText->SetText(FText::FromString("Ready"));
-
-				CountDownText->TextDelegate.BindUFunction(this, "CountDownField");
-			}
-		}
+		CountDownText->SetText(FText::FromString("Ready"));
+		CountDownText->TextDelegate.BindUFunction(this, "CountDownField");
 	}
 	return true;
 }
@@ -45,29 +35,32 @@ FText UCountDownWidget::SetNumberField()
 
 	if (World != nullptr)
 	{
-		ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(World->GetAuthGameMode());
-
-		if (SPGameMode)
+		TSubclassOf<ASchoolPorjectPawn> player;
+		player = ASchoolPorjectPawn::StaticClass();
+		TArray<AActor*> getPlayer;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), player, getPlayer);
+		for (AActor* Actor : getPlayer)
 		{
-			if (SPGameMode->GetCountDownTime() == 0)
+			ASchoolPorjectPawn* pawn = Cast<ASchoolPorjectPawn>(Actor);
+			if (pawn->GetCountDownTime() == 0)
 			{
 				RemoveFromParent();
 			}
-
-			return FText::FromString(FString::FromInt(SPGameMode->GetCountDownTime()));
 		}
-		else
-		{
-			return FText::FromString("Ready");
-		}
+		
+		return FText::FromString(FString::FromInt(Cast<ASchoolPorjectPawn>(GetOwningPlayerPawn())->GetCountDownTime()));
+	}
+	else
+	{
+		return FText::FromString("Ready");
 	}
 
 	return FText::FromString("Ready");
 }
+
 void UCountDownWidget::NativeTick(const FGeometry& MyGemotry, float InDeltaTime)
 {
 	Super::NativeTick(MyGemotry, InDeltaTime);
-
-	//CountDownText->SetText(SetNumberField());
+	CountDownText->SetText(SetNumberField());
 
  }

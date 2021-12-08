@@ -136,10 +136,19 @@ ASchoolPorjectPawn::ASchoolPorjectPawn(const FObjectInitializer& ObjectInitalize
 	bIsHalfPoint = false;
 	bIsFinished = false;
 	bIsOnce = false;
+
+	CountDownTime = 3;
+	InGameTimer = 0.0f;
 	
 
 	ConstructorHelpers::FClassFinder<UCountDownWidget> BPWidget(TEXT("/Game/UI/CountDownWidget_BP"));
 	CountDownWidget = BPWidget.Class;
+
+	ConstructorHelpers::FClassFinder<UEndRaceWidget> CountBPWidget(TEXT("/Game/UI/EndRaceWidget_BP"));
+	EndRaceWidget = CountBPWidget.Class;
+
+	ConstructorHelpers::FClassFinder<UInGameTimerWidget> RaceWidget(TEXT("/Game/UI/InGameTimer"));
+	TimerWidget = RaceWidget.Class;
 
 	bReplicates = true;
 	SetReplicateMovement(true);
@@ -248,19 +257,14 @@ void ASchoolPorjectPawn::Tick(float Delta)
 
 	if (!bIsOnce)
 	{
-		ASchoolPorjectGameMode* SPGameMode = Cast<ASchoolPorjectGameMode>(UGameplayStatics::GetGameMode(this));
-
-		if (SPGameMode != nullptr)
+		if (this->GetCountDownTime() == 0)
 		{
-			if (SPGameMode->GetCountDownTime() == 0)
-			{
-				Enable();
-				bIsOnce = true;
-			}
-			else
-			{
-				return;
-			}
+			Enable();
+			bIsOnce = true;
+		}
+		else
+		{
+			return;
 		}
 	}
 }
@@ -347,6 +351,9 @@ void ASchoolPorjectPawn::NotifyActorBeginOverlap(AActor* OtherActor)
 		bIsFinished = true;
 		DisableInput(Cast<APlayerController>(this));
 		MoveForward(0);
+
+		EndWidget = CreateWidget<UEndRaceWidget>(GetWorld(), EndRaceWidget);
+		EndWidget->AddToViewport();
 	}
 }
 
@@ -378,10 +385,8 @@ void ASchoolPorjectPawn::OnReady_Implementation()
 void ASchoolPorjectPawn::OnStart_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Yeah"));
-
-	//UCountDownWidget* Widget = Cast<UCountDownWidget>(CountDownWidget);
-	//Widget->AddToViewport();
-	
+	GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &ASchoolPorjectPawn::CountDownAdvanceTimer, 1.0f, true);
+	ShowCountDown();
 }
 
 void ASchoolPorjectPawn::Disable_Implementation()
@@ -392,6 +397,42 @@ void ASchoolPorjectPawn::Disable_Implementation()
 void ASchoolPorjectPawn::Enable_Implementation()
 {
 	EnableInput(UGameplayStatics::GetPlayerController(this, 0));
+}
+
+void ASchoolPorjectPawn::ShowCountDown()
+{
+	Widget = CreateWidget<UCountDownWidget>(GetWorld(), CountDownWidget);
+	Widget->AddToViewport();
+}
+
+void ASchoolPorjectPawn::CountDownAdvanceTimer()
+{
+	--CountDownTime;
+	UE_LOG(LogTemp, Warning, TEXT("0"));
+
+	if (CountDownTime < 1)
+	{
+		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
+		GetWorldTimerManager().SetTimer(InGameHandle, this, &ASchoolPorjectPawn::StartInGameAdvanceTimer, 0.1f, true);
+
+		RaceTimeWidget = CreateWidget<UInGameTimerWidget>(GetWorld(), TimerWidget);
+		RaceTimeWidget->AddToViewport();
+	}
+}
+
+void ASchoolPorjectPawn::StartInGameAdvanceTimer()
+{
+	InGameTimer += 0.1f;
+}
+
+int32 ASchoolPorjectPawn::GetCountDownTime()
+{
+	return CountDownTime;
+}
+
+float ASchoolPorjectPawn::GetInGameTime()
+{
+	return InGameTimer;
 }
 
 #undef LOCTEXT_NAMESPACE

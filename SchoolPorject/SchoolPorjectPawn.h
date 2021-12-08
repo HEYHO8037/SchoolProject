@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "WheeledVehicle.h"
 #include "CountDownWidget.h"
+#include "EndRaceWidget.h"
+#include "InGameTimerWidget.h"
 #include "Net/UnrealNetwork.h"
 #include "SchoolPorjectPawn.generated.h"
 
@@ -74,6 +76,13 @@ public:
 	bool bInReverseGear;
 
 	TSubclassOf<UCountDownWidget> CountDownWidget;
+	class UCountDownWidget* Widget;
+
+	TSubclassOf<UEndRaceWidget> EndRaceWidget;
+	class UEndRaceWidget* EndWidget;
+
+	TSubclassOf<UInGameTimerWidget> TimerWidget;
+	class UInGameTimerWidget* RaceTimeWidget;
 
 	/** Initial offset of incar camera */
 	FVector InternalCameraOrigin;
@@ -129,6 +138,14 @@ public:
 	UFUNCTION(NetMulticast, reliable)
 	void Enable();
 
+	void ShowCountDown();
+
+	void CountDownAdvanceTimer();
+	void StartInGameAdvanceTimer();
+
+	int32 GetCountDownTime();
+	float GetInGameTime();
+
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
 
@@ -151,6 +168,13 @@ private:
 	bool bIsHalfPoint;
 	bool bIsFinished;
 	bool bIsOnce;
+
+	FTimerHandle CountDownTimerHandle;
+	FTimerHandle InGameHandle;
+
+	int32 CountDownTime;
+
+	float InGameTimer;
 
 
 
